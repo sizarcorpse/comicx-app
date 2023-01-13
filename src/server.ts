@@ -24,6 +24,15 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ status: "OK", message: "Welcome to Node Typescript" });
 });
 
+//
+
+import galleryUploader from "./multer-config";
+
+app.post("/upload", galleryUploader, async (req, res) => {
+  res.status(200).json({ status: "OK", message: req.files });
+});
+
+//
 const port = process.env.PORT;
 
 app.use((req, res, next) => {
