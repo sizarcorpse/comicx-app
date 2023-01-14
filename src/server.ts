@@ -27,8 +27,9 @@ app.get("/", (req: Request, res: Response) => {
 //
 
 import galleryUploader from "./multer-config";
+import createThumbnail from "./thumbnail-config";
 
-app.post("/upload", galleryUploader, async (req, res) => {
+app.post("/upload", galleryUploader, createThumbnail, async (req, res) => {
   res.status(200).json({ status: "OK", message: req.files });
 });
 
