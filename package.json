@@ -7,8 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
-    "clean": "rimraf dist/"
+    "dev": "npm run clean && tsc && concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
+    "clean": "rimraf dist/",
+    "build": "tsc"
   },
   "keywords": [
     "nodejs",
@@ -22,7 +23,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "file-type": "^18.1.0",
     "helmet": "^6.0.1",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",

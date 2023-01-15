@@ -1,9 +1,12 @@
 import * as bodyParser from "body-parser";
+
 import cors from "cors";
 import dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+
+import v1WelcomeRouter from "./api/v1/welcome/routes/welcomeRoutes";
 
 dotenv.config();
 
@@ -20,11 +23,7 @@ app.use(
 app.use(helmet());
 app.use(morgan("short"));
 
-app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ status: "OK", message: "Welcome to Node Typescript" });
-});
-
-//
+app.use("/", v1WelcomeRouter);
 
 import galleryUploader from "./multer-config";
 import createThumbnail from "./thumbnail-config";
