@@ -4,7 +4,8 @@ import { tagService } from "../services/tagService";
 
 export const tagController = {
   async sample(req: Request, res: Response, next: NextFunction) {
-    // code here
+    const data = await tagService.getAllTags();
+    res.status(200).json({ status: "OK", data: data });
     try {
     } catch (error) {
       res

@@ -1,13 +1,14 @@
-import { Express, NextFunction, Request, Response } from 'express'; 
- 
-export const tagService = { 
-	async sample(req: Request, res: Response, next: NextFunction) { 
-		// code here 
-		try { 
-		} catch (error) { 
-			res 
-		.status(400) 
-		.json({ status: 'NOT_OK', message: 'Something went wrong' }); 
-		} 
-	}, 
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export const tagService = {
+  async getAllTags() {
+    try {
+      const tags = await prisma.tag.findMany();
+      return tags;
+    } catch (error) {
+      throw new Error("Something went wrong");
+    }
+  },
 };
