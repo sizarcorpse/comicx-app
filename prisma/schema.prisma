@@ -11,10 +11,60 @@ datasource db {
 }
 
 model Artist {
-  artist_id  String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  username   String   @unique
-  avatar_url String?
-  cover_url  String?
+  artistId          String         @id @default(uuid())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  username          String         @unique
+  profilePhoto      String?
+  profileCoverPhoto String?
+  isFavorite        Boolean?
+  albums            Album[]
+  tags              TagsOnArtist[]
+}
+
+model Album {
+  albumId   String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updated   DateTime      @updatedAt
+  Artist    Artist?       @relation(fields: [artistId], references: [artistId])
+  artistId  String?
+  photos    Photo[]
+  tags      TagsOnAlbum[]
+}
+
+model Photo {
+  photoId String  @id @default(uuid())
+  Album   Album?  @relation(fields: [albumId], references: [albumId])
+  albumId String?
+}
+
+model Tag {
+  tagId         String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  title         String
+  tagPhoto      String?
+  tagCoverPhoto String?
+  albums        TagsOnAlbum[]
+  atrsit        TagsOnArtist[]
+}
+
+model TagsOnAlbum {
+  album     Album    @relation(fields: [albumId], references: [albumId])
+  albumId   String
+  tag       Tag      @relation(fields: [tagId], references: [tagId])
+  tagId     String
+  createdAt DateTime @default(now())
+
+  @@id([albumId, tagId])
+}
+
+model TagsOnArtist {
+  artist    Artist   @relation(fields: [artistId], references: [artistId])
+  artistId  String
+  tag       Tag      @relation(fields: [tagId], references: [tagId])
+  tagId     String
+  createdAt DateTime @default(now())
+
+  @@id([artistId, tagId])
 }
