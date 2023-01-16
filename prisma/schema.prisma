@@ -20,33 +20,67 @@ model Artist {
   isFavorite        Boolean?
   albums            Album[]
   tags              TagsOnArtist[]
+
+  @@map("artists")
+}
+
+enum Language {
+  English
+  Japanese
+  Chinese
+}
+
+enum Rating {
+  Appalling
+  Horrible
+  Bad
+  Average
+  Fine
+  Good
+  Awesome
+  Fastastic
+  Masterpiece
 }
 
 model Album {
-  albumId   String        @id @default(uuid())
-  createdAt DateTime      @default(now())
-  updated   DateTime      @updatedAt
-  Artist    Artist?       @relation(fields: [artistId], references: [artistId])
-  artistId  String?
-  photos    Photo[]
-  tags      TagsOnAlbum[]
+  albumId     String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updated     DateTime      @updatedAt
+  Artist      Artist?       @relation(fields: [artistId], references: [artistId])
+  artistId    String?
+  title       String        @default("Untitled Album")
+  issue       Int?          @default(1)
+  language    Language      @default(English)
+  pages       Int?
+  isCencored  Boolean       @default(false)
+  isFavorited Boolean
+  rating      Rating
+  photos      Photo[]
+  tags        TagsOnAlbum[]
+
+  @@index([title, issue(sort: Asc)])
+  @@map("albums")
 }
 
 model Photo {
   photoId String  @id @default(uuid())
   Album   Album?  @relation(fields: [albumId], references: [albumId])
   albumId String?
+
+  @@map("photos")
 }
 
 model Tag {
   tagId         String         @id @default(uuid())
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  title         String
+  title         String         @unique
   tagPhoto      String?
   tagCoverPhoto String?
   albums        TagsOnAlbum[]
   atrsit        TagsOnArtist[]
+
+  @@map("tags")
 }
 
 model TagsOnAlbum {
