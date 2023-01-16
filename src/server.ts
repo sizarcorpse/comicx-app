@@ -6,8 +6,6 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import v1WelcomeRouter from "./api/v1/welcome/routes/welcomeRoutes";
-
 dotenv.config();
 
 const app: Express = express();
@@ -22,8 +20,6 @@ app.use(
 );
 app.use(helmet());
 app.use(morgan("short"));
-
-app.use("/", v1WelcomeRouter);
 
 import galleryUploader from "./multer-config";
 import createThumbnail from "./thumbnail-config";
