@@ -7,7 +7,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 // Import Route Tag
-
+import v1TagRouter from "./api/v1/tag/routes/tagRoute";
 // Import Route Album
 
 // Import Route Artist
@@ -35,7 +35,7 @@ app.post("/upload", galleryUploader, createThumbnail, async (req, res) => {
 });
 
 // App.use Tag
-
+app.use("/tags", v1TagRouter);
 // App.use Album
 
 // App.use Artist
