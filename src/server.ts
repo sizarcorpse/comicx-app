@@ -6,6 +6,12 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
+// Import Route Tag
+
+// Import Route Album
+
+// Import Route Artist
+
 dotenv.config();
 
 const app: Express = express();
@@ -28,7 +34,12 @@ app.post("/upload", galleryUploader, createThumbnail, async (req, res) => {
   res.status(200).json({ status: "OK", message: req.files });
 });
 
-//
+// App.use Tag
+
+// App.use Album
+
+// App.use Artist
+
 const port = process.env.PORT;
 
 app.use((req, res, next) => {
