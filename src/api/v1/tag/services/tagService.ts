@@ -1,14 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { TagQueryParams, TagResponse } from "../type/Tag";
 
 const prisma = new PrismaClient();
 
 export const tagService = {
-  async getAllTags() {
+  async getAllTags(context: any) {
+    const { sort, order, limit, skip }: TagQueryParams = context;
+
     try {
-      const tags = await prisma.tag.findMany();
+      const tags: TagResponse[] = await prisma.tag.findMany({
+        skip: parseInt(skip),
+        take: parseInt(limit),
+        orderBy: {
+          [sort]: order,
+        },
+      });
       return tags;
-    } catch (error) {
-      throw new Error("Something went wrong");
+    } catch (e) {
+      throw new Error("Could not find tags");
     }
   },
   async createNewTag(context) {

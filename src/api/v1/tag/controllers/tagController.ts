@@ -1,24 +1,20 @@
 import { Express, NextFunction, Request, Response } from "express";
-
 import { tagService } from "../services/tagService";
-
+import { Tag, TagQueryParams } from "../type/Tag";
 import { schema } from "../validator/tagValidator";
 
-import { Tag } from "../type/Tag";
-
 export const tagController = {
-  async sample(req: Request, res: Response, next: NextFunction) {
-    const data = await tagService.getAllTags();
-    res.status(200).json({ status: "OK", data: data });
+  async getAllTags(req: Request, res: Response, next: NextFunction) {
+    const context: TagQueryParams = req.query;
+
     try {
-    } catch (error) {
-      res
-        .status(400)
-        .json({ status: "NOT_OK", message: "Something went wrong" });
+      const data = await tagService.getAllTags(context);
+      res.status(200).json({ status: "OK", data: data });
+    } catch (error: any) {
+      res.status(400).json({ status: "NOT_OK", message: error.message });
     }
   },
 
-  //
   async createNewTag(req: Request, res: Response, next: NextFunction) {
     try {
       const isError = schema.validate(req.body);
