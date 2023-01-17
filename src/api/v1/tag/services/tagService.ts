@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import fs, { unlink, unlinkSync } from "fs";
 import { TagQueryParams, TagResponse } from "../type/Tag";
 
 const prisma = new PrismaClient();
@@ -44,5 +45,20 @@ export const tagService = {
     } catch (error: any) {
       throw error;
     }
+  },
+
+  async unlinkTagContentPhoto(context) {
+    try {
+      const promises = Object.entries(context).map(([key, value]) => {
+        const x = value[0];
+        if (x.thumbnail) {
+          unlinkSync(x.thumbnail.destination);
+        }
+
+        return unlinkSync(x.path);
+      });
+
+      Promise.all(promises);
+    } catch (error) {}
   },
 };

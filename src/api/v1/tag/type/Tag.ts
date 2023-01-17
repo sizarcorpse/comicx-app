@@ -1,7 +1,9 @@
 export interface Tag {
   title: string;
-  tagPhoto?: string;
-  tagCoverPhoto?: string;
+  description?: string;
+  isFavorited?: true | false;
+  photoUrl?: string;
+  coverPhotoUrl?: string;
 }
 
 export interface TagQueryParams {

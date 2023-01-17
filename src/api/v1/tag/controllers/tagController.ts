@@ -16,26 +16,34 @@ export const tagController = {
   },
 
   async createNewTag(req: Request, res: Response, next: NextFunction) {
+    const { title, description, isFavorited } = req.body;
     try {
-      const isError = schema.validate(req.body);
+      const isError = schema.validate({
+        title,
+        description,
+        isFavorited,
+      });
 
       if (isError.error) {
-        throw new Error("Validation failed");
+        await tagService.unlinkTagContentPhoto(req.files);
+        throw new Error("Validations failed");
       }
 
       const newTag: Tag = {
-        title: req.body.title,
-        tagPhoto: req.body.tagPhoto,
-        tagCoverPhoto: req.body.tagCoverPhoto,
+        title,
+        description,
+        isFavorited: isFavorited,
+        photoUrl: `${req.files["avatar-photo-file"][0].destination}/${req.files["avatar-photo-file"][0].filename}`,
+        coverPhotoUrl: `${req.files["cover-photo-file"][0].destination}/${req.files["cover-photo-file"][0].filename}`,
       };
 
       const data = await tagService.createNewTag(newTag);
+
       res.status(200).json({ status: "OK", data: data });
     } catch (error: any) {
       res.status(400).json({
         status: "NOT_OK",
-        message: "Something went wrong xx",
-        error: error,
+        message: error.message,
       });
     }
   },
