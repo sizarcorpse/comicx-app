@@ -78,7 +78,7 @@ model Tag {
   description   String?
   photoUrl      String?
   coverPhotoUrl String?
-  isFavorited   Boolean
+  isFavorited   Boolean?       @default(false)
   albums        TagsOnAlbum[]
   artists       TagsOnArtist[]
 
