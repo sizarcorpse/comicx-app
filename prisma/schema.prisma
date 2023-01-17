@@ -74,11 +74,13 @@ model Tag {
   tagId         String         @id @default(uuid())
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  title         String         @unique
-  tagPhoto      String?
-  tagCoverPhoto String?
+  title         String         @unique @db.VarChar(33)
+  description   String?
+  photoUrl      String?
+  coverPhotoUrl String?
+  isFavorited   Boolean
   albums        TagsOnAlbum[]
-  atrsit        TagsOnArtist[]
+  artists       TagsOnArtist[]
 
   @@map("tags")
 }
