@@ -55,32 +55,57 @@ model Album {
   isCencored  Boolean       @default(false)
   isFavorited Boolean
   rating      Rating
-  photos      Photo[]
+  photos      Media[]
   tags        TagsOnAlbum[]
 
   @@index([title, issue(sort: Asc)])
   @@map("albums")
 }
 
-model Photo {
-  photoId String  @id @default(uuid())
-  Album   Album?  @relation(fields: [albumId], references: [albumId])
-  albumId String?
+model Thumbnail {
+  thumbnailId String @id @default(uuid())
+  format      String
+  width       Int
+  height      Int
+  size        Int
+  destination String
+  Media       Media? @relation("mediaThumbnail")
+}
 
-  @@map("photos")
+model Media {
+  mediaId     String     @id @default(uuid())
+  Album       Album?     @relation(fields: [albumId], references: [albumId])
+  albumId     String?
+  fieldname   String
+  mimetype    String
+  destination String
+  filename    String
+  path        String
+  size        Int
+  format      String
+  width       Int?
+  height      Int?
+  Thumbnail   Thumbnail? @relation("mediaThumbnail", fields: [thumbnailId], references: [thumbnailId])
+  thumbnailId String?    @unique
+  TagAvatar   Tag?       @relation("tagAvatar")
+  TagCover    Tag?       @relation("tagCover")
+
+  @@map("media")
 }
 
 model Tag {
-  tagId         String         @id @default(uuid())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  title         String         @unique @db.VarChar(33)
-  description   String?
-  photoUrl      String?
-  coverPhotoUrl String?
-  isFavorited   Boolean?       @default(false)
-  albums        TagsOnAlbum[]
-  artists       TagsOnArtist[]
+  tagId       String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  title       String         @unique @db.VarChar(33)
+  description String?
+  Avatar      Media?         @relation("tagAvatar", fields: [avatarId], references: [mediaId])
+  avatarId    String?        @unique
+  Cover       Media?         @relation("tagCover", fields: [coverId], references: [mediaId])
+  coverId     String?        @unique
+  isFavorited Boolean?       @default(false)
+  albums      TagsOnAlbum[]
+  artists     TagsOnArtist[]
 
   @@map("tags")
 }
