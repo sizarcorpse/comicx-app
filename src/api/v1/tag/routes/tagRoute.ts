@@ -2,17 +2,12 @@ import express from "express";
 import { tagController } from "../controllers/tagController";
 import { queryHandler } from "../middlewares/tagMiddleware";
 
-import contentPhotoUploader from "../../../../config/multer/contentPhotoUpload";
-import contentPhotoResize from "../../../../config/sharp/contentPhotoResize";
+import useCreateThumbnail from "../../../../libs/thumbnail/useCreateThumbnail";
+import uploader from "../../../../libs/uploader/uploader";
 
 const router = express.Router();
 
 router.get("/", queryHandler, tagController.getAllTags);
-router.post(
-  "/new",
-  contentPhotoUploader,
-  contentPhotoResize,
-  tagController.createNewTag
-);
+router.post("/new", uploader, useCreateThumbnail, tagController.createNewTag);
 
 export default router;

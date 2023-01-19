@@ -18,26 +18,28 @@ export const tagController = {
   async createNewTag(req: Request, res: Response, next: NextFunction) {
     const { title, description, isFavorited } = req.body;
     try {
-      const isError = schema.validate({
-        title,
-        description,
-        isFavorited,
-      });
+      // const isError = schema.validate({
+      //   title,
+      //   description,
+      //   isFavorited,
+      // });
 
-      if (isError.error) {
-        await tagService.unlinkTagContentPhoto(req.files);
-        throw new Error("Validations failed");
-      }
+      // if (isError.error) {
+      //   await tagService.unlinkTagContentPhoto(req.files);
+      //   throw new Error("Validations failed");
+      // }
 
-      const newTag: Tag = {
-        title,
-        description,
-        isFavorited: isFavorited,
-        photoUrl: `${req.files["avatar-photo-file"][0].destination}/${req.files["avatar-photo-file"][0].filename}`,
-        coverPhotoUrl: `${req.files["cover-photo-file"][0].destination}/${req.files["cover-photo-file"][0].filename}`,
-      };
+      // const newTag: Tag = {
+      //   title,
+      //   description,
+      //   isFavorited: isFavorited,
+      //   photoUrl: `${req.files["avatar-photo-file"][0].destination}/${req.files["avatar-photo-file"][0].filename}`,
+      //   coverPhotoUrl: `${req.files["cover-photo-file"][0].destination}/${req.files["cover-photo-file"][0].filename}`,
+      // };
 
-      const data = await tagService.createNewTag(newTag);
+      // const data = await tagService.createNewTag(newTag);
+
+      const data = req.files;
 
       res.status(200).json({ status: "OK", data: data });
     } catch (error: any) {
