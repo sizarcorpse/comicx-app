@@ -70,6 +70,8 @@ model Thumbnail {
   size        Int
   destination String
   Media       Media? @relation("mediaThumbnail")
+
+  @@map("thumbnails")
 }
 
 model Media {
