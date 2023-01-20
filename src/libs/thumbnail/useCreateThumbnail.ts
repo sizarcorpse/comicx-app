@@ -4,22 +4,26 @@ import { handleMetadata } from "./handleMetadata";
 import { handleResize } from "./handleResize";
 
 const useCreateThumbnail = async (req: Request, res: Response, next: any) => {
-  const avatar = req?.files["avatar-photo-file"];
-  const cover = req?.files["cover-photo-file"];
+  if (req.files) {
+    const avatar = req?.files["avatar-photo-file"];
+    const cover = req?.files["cover-photo-file"];
 
-  let avatarPromise = [];
-  let coverPromise = [];
+    let avatarPromise = [];
+    let coverPromise = [];
 
-  if (avatar?.length > 0) {
-    avatarPromise = await handleResize(req, avatar, "avatar-photo-file");
-  }
-  if (cover?.length > 0) {
-    coverPromise = await handleMetadata(req, cover, "cover-photo-file");
-  }
+    if (avatar?.length > 0) {
+      avatarPromise = await handleResize(req, avatar, "avatar-photo-file");
+    }
+    if (cover?.length > 0) {
+      coverPromise = await handleMetadata(req, cover, "cover-photo-file");
+    }
 
-  Promise.all(concat(avatarPromise, coverPromise)).then(() => {
+    Promise.all(concat(avatarPromise, coverPromise)).then(() => {
+      next();
+    });
+  } else {
     next();
-  });
+  }
 
   try {
   } catch (error) {
