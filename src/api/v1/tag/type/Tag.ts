@@ -1,11 +1,3 @@
-export interface Tag {
-  title: string;
-  description?: string;
-  isFavorited?: true | false;
-  photoUrl?: string;
-  coverPhotoUrl?: string;
-}
-
 export interface TagQueryParams {
   skip?: string;
   limit?: string;
@@ -13,13 +5,13 @@ export interface TagQueryParams {
   order?: "asc" | "desc";
 }
 
-export interface TagResponse {
+export interface Tag {
   tagId: string;
-  createdAt: object;
-  updatedAt: object;
+  createdAt: Date;
+  updatedAt: Date;
   title: string;
-  tagPhoto?: string;
-  tagCoverPhoto?: string;
-  albums?: [];
-  // add artist
+  description?: string;
+  avatarId?: string;
+  coverId?: string;
+  isFavorited?: boolean;
 }
