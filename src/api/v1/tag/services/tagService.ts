@@ -274,4 +274,31 @@ export const tagService = {
       throw error;
     }
   },
+
+  async getTag(tagId: string) {
+    try {
+      const tag = await prisma.tag.findUnique({
+        where: {
+          tagId: tagId,
+        },
+        include: {
+          Avatar: {
+            include: {
+              Thumbnail: true,
+            },
+          },
+
+          Cover: true,
+        },
+      });
+
+      if (!tag) {
+        throw new Error("Tag does not exists");
+      }
+
+      return tag;
+    } catch (error: any) {
+      throw error;
+    }
+  },
 };

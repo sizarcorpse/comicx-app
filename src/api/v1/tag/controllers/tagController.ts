@@ -99,4 +99,19 @@ export const tagController = {
       });
     }
   },
+
+  async getTag(req: Request, res: Response, next: NextFunction) {
+    const tagId = req.params.tagId;
+
+    try {
+      const data = await tagService.getTag(tagId);
+
+      res.status(200).json({ status: "OK", data });
+    } catch (error: any) {
+      res.status(400).json({
+        status: "NOT_OK",
+        message: error.message,
+      });
+    }
+  },
 };

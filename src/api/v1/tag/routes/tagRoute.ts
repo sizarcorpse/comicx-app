@@ -15,5 +15,6 @@ router.patch(
   useCreateThumbnail,
   tagController.updateTag
 );
+router.get("/:tagId", tagController.getTag);
 
 export default router;
