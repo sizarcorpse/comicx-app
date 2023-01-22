@@ -1,7 +1,8 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fs, { unlink, unlinkSync } from "fs";
+import { any } from "joi";
+import { concat } from "lodash";
 import { Tag, TagQueryParams } from "../type/Tag";
-
 const prisma = new PrismaClient();
 
 export const tagService = {
@@ -139,8 +140,71 @@ export const tagService = {
     } catch (error) {}
   },
 
-  async updateTag(tagId, info, avatar, cover) {
+  async updateTag(tagId: string, info: any, avatar: any, cover: any) {
     try {
+      // If new avatar or cover is updated ? remove current file from storage.
+      if (avatar || cover) {
+        const destinations: any = await prisma.tag.findUnique({
+          where: {
+            tagId: tagId,
+          },
+          select: {
+            Avatar: {
+              select: {
+                mediaId: true,
+                path: true,
+                Thumbnail: {
+                  select: {
+                    destination: true,
+                  },
+                },
+              },
+            },
+            Cover: {
+              select: {
+                mediaId: true,
+                path: true,
+              },
+            },
+          },
+        });
+
+        if (destinations) {
+          // If Tag already has an Avatar ? update Avatar with new Avatar
+          if (avatar && destinations.Avatar) {
+            const avatarMediaId = destinations.Avatar.mediaId;
+            const avatarOriginalPath = destinations.Avatar.path;
+            const avatarThumbnailPath =
+              destinations.Avatar.Thumbnail.destination;
+
+            await prisma.media.delete({
+              where: {
+                mediaId: avatarMediaId,
+              },
+            });
+
+            concat(avatarOriginalPath, avatarThumbnailPath).map((path) => {
+              unlinkSync(path);
+            });
+          }
+
+          // If Tag already has an Cover ? update Avatar with new Cover
+          if (cover && destinations.Cover) {
+            const coverOriginalPath = destinations.Cover.path;
+            const coverMediaId = destinations.Cover.mediaId;
+            await prisma.media.delete({
+              where: {
+                mediaId: coverMediaId,
+              },
+            });
+            if (coverOriginalPath) {
+              unlinkSync(coverOriginalPath);
+            }
+          }
+        }
+      }
+
+      // Update Tag with provided fields
       const updateTag = await prisma.tag.update({
         where: {
           tagId: tagId,
@@ -149,6 +213,55 @@ export const tagService = {
           title: info.title,
           description: info.description,
           isFavorited: info.isFavorited && JSON.parse(info.isFavorited),
+          Avatar: avatar
+            ? {
+                create: {
+                  fieldname: avatar.fieldname,
+                  mimetype: avatar.mimetype,
+                  destination: avatar.destination,
+                  filename: avatar.filename,
+                  path: avatar.path,
+                  size: avatar.size,
+                  format: avatar.format,
+                  width: avatar.width,
+                  height: avatar.height,
+                  Thumbnail: avatar.thumbnail
+                    ? {
+                        create: {
+                          format: avatar.thumbnail.format,
+                          width: avatar.thumbnail.width,
+                          height: avatar.thumbnail.height,
+                          size: avatar.thumbnail.size,
+                          destination: avatar.thumbnail.destination,
+                        },
+                      }
+                    : undefined,
+                },
+              }
+            : undefined,
+          Cover: cover
+            ? {
+                create: {
+                  fieldname: cover.fieldname,
+                  mimetype: cover.mimetype,
+                  destination: cover.destination,
+                  filename: cover.filename,
+                  path: cover.path,
+                  size: cover.size,
+                  format: cover.format,
+                  width: cover.width,
+                  height: cover.height,
+                },
+              }
+            : undefined,
+        },
+        include: {
+          Avatar: {
+            include: {
+              Thumbnail: true,
+            },
+          },
+          Cover: true,
         },
       });
 

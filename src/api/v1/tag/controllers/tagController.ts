@@ -92,7 +92,7 @@ export const tagController = {
 
       res.status(200).json({ status: "OK", data });
     } catch (error: any) {
-      // await tagService.unlinkTagContentPhoto(req.files);
+      await tagService.unlinkTagContentPhoto(req.files);
       res.status(400).json({
         status: "NOT_OK",
         message: error.message,
