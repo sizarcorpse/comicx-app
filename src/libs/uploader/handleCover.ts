@@ -38,14 +38,12 @@ export const handleCoverFilename = async (
   file: Express.Multer.File,
   cb: FileNameCallback
 ) => {
-  const { title } = req.body;
   const mimetype = new Map([
     ["image/jpeg", ".jpg"],
     ["image/png", ".png"],
   ]);
-  const refactor_title = new String(title).replace(/\s+/g, "-").toLowerCase();
   const fieldname = file.fieldname;
   const mime = mimetype.get(file.mimetype);
-  const new_title = `${refactor_title}-${fieldname}${mime}`;
+  const new_title = `${fieldname}-${Date.now()}${mime}`;
   cb(null, new_title);
 };
