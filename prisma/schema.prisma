@@ -91,10 +91,10 @@ model Media {
   width       Int?
   height      Int?
   Thumbnail   Thumbnail? @relation("mediaThumbnail")
-  // Thumbnail   Thumbnail? @relation("mediaThumbnail", fields: [thumbnailId], references: [thumbnailId], onDelete: Cascade)
-  // thumbnailId String?    @unique
-  TagAvatar   Tag?       @relation("tagAvatar")
-  TagCover    Tag?       @relation("tagCover")
+  Tag         Tag?       @relation("tagAvatar", fields: [tagId], references: [tagId], onDelete: Cascade)
+  tagId       String?    @unique
+  Cover       Tag?       @relation("tagCover", fields: [coverId], references: [tagId], onDelete: Cascade)
+  coverId     String?    @unique
 
   @@map("media")
 }
@@ -105,10 +105,8 @@ model Tag {
   updatedAt   DateTime       @updatedAt
   title       String         @unique @db.VarChar(33)
   description String?
-  Avatar      Media?         @relation("tagAvatar", fields: [avatarId], references: [mediaId])
-  avatarId    String?        @unique
-  Cover       Media?         @relation("tagCover", fields: [coverId], references: [mediaId])
-  coverId     String?        @unique
+  Avatar      Media?         @relation("tagAvatar")
+  Cover       Media?         @relation("tagCover")
   isFavorited Boolean?       @default(false)
   albums      TagsOnAlbum[]
   artists     TagsOnArtist[]
