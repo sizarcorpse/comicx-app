@@ -114,4 +114,19 @@ export const tagController = {
       });
     }
   },
+
+  async deleteTag(req: Request, res: Response, next: NextFunction) {
+    const tagId = req.params.tagId;
+
+    try {
+      const data = await tagService.deleteTag(tagId);
+
+      res.status(200).json({ status: "OK", data });
+    } catch (error: any) {
+      res.status(400).json({
+        status: "NOT_OK",
+        message: error.message,
+      });
+    }
+  },
 };

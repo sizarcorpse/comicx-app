@@ -16,5 +16,6 @@ router.patch(
   tagController.updateTag
 );
 router.get("/:tagId", tagController.getTag);
+router.delete("/:tagId", tagController.deleteTag);
 
 export default router;

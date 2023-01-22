@@ -1,7 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fs, { unlink, unlinkSync } from "fs";
-import { any } from "joi";
-import { concat } from "lodash";
+import { concat, get } from "lodash";
 import { Tag, TagQueryParams } from "../type/Tag";
 const prisma = new PrismaClient();
 
@@ -295,6 +294,43 @@ export const tagService = {
       if (!tag) {
         throw new Error("Tag does not exists");
       }
+
+      return tag;
+    } catch (error: any) {
+      throw error;
+    }
+  },
+  async deleteTag(tagId: string) {
+    try {
+      const tag = await prisma.tag.delete({
+        where: {
+          tagId: tagId,
+        },
+        include: {
+          Avatar: {
+            include: {
+              Thumbnail: true,
+            },
+          },
+          Cover: true,
+        },
+      });
+
+      if (!tag) {
+        throw new Error("Tag does not exists");
+      }
+
+      const avatarOriginalPath = get(tag, "Avatar.path", []);
+      const avatarThumbnailPath = get(tag, "Avatar.Thumbnail.destination", []);
+      const coverOriginalPath = get(tag, "Cover.path", []);
+
+      concat(avatarOriginalPath, coverOriginalPath, avatarThumbnailPath).map(
+        (item) => {
+          if (item != "" || item != undefined) {
+            unlinkSync(item);
+          }
+        }
+      );
 
       return tag;
     } catch (error: any) {
