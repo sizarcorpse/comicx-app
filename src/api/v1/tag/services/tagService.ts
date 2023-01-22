@@ -43,6 +43,19 @@ export const tagService = {
     }
   },
 
+  async tagExitsById(id: string) {
+    try {
+      const result = await prisma.tag.findUnique({
+        where: {
+          tagId: id,
+        },
+      });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   async createNewTag(info: any, avatar: any, cover: any) {
     try {
       const result = await prisma.tag.create({
@@ -124,5 +137,28 @@ export const tagService = {
 
       Promise.all(promises);
     } catch (error) {}
+  },
+
+  async updateTag(tagId, info, avatar, cover) {
+    try {
+      const updateTag = await prisma.tag.update({
+        where: {
+          tagId: tagId,
+        },
+        data: {
+          title: info.title,
+          description: info.description,
+          isFavorited: info.isFavorited && JSON.parse(info.isFavorited),
+        },
+      });
+
+      if (!updateTag) {
+        throw new Error("Create tag failed");
+      }
+
+      return updateTag;
+    } catch (error: any) {
+      throw error;
+    }
   },
 };

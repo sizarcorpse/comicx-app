@@ -54,4 +54,49 @@ export const tagController = {
       });
     }
   },
+
+  async updateTag(req: Request, res: Response, next: NextFunction) {
+    const info = req.body;
+    const tagId = req.params.tagId;
+
+    const avatar = req.files["avatar-photo-file"]
+      ? req.files["avatar-photo-file"][0]
+      : null;
+    const cover = req.files["cover-photo-file"]
+      ? req.files["cover-photo-file"][0]
+      : null;
+
+    try {
+      // const isError = schema.validate({
+      //   title: info.title,
+      //   description: info.description,
+      //   isFavorited: info.isFavorited,
+      // });
+      // if (isError.error) {
+      //   throw new Error("Validations failed");
+      // }
+
+      const isIdExist = await tagService.tagExitsById(tagId);
+      if (!isIdExist) {
+        throw new Error("Tag does not exists");
+      }
+
+      if (info.title) {
+        const isTitleExist = await tagService.tagExitsByTitle(info.title);
+        if (isTitleExist) {
+          throw new Error("Tag Name already taken");
+        }
+      }
+
+      const data = await tagService.updateTag(tagId, info, avatar, cover);
+
+      res.status(200).json({ status: "OK", data });
+    } catch (error: any) {
+      // await tagService.unlinkTagContentPhoto(req.files);
+      res.status(400).json({
+        status: "NOT_OK",
+        message: error.message,
+      });
+    }
+  },
 };

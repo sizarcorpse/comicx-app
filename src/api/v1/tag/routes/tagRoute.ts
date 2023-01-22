@@ -9,5 +9,11 @@ const router = express.Router();
 
 router.get("/", queryHandler, tagController.getAllTags);
 router.post("/new", uploader, useCreateThumbnail, tagController.createNewTag);
+router.patch(
+  "/edit/:tagId",
+  uploader,
+  useCreateThumbnail,
+  tagController.updateTag
+);
 
 export default router;

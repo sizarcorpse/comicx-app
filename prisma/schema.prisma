@@ -69,7 +69,10 @@ model Thumbnail {
   height      Int
   size        Int
   destination String
-  Media       Media? @relation("mediaThumbnail")
+  // Media       Media? @relation("mediaThumbnail")
+
+  Media   Media?  @relation("mediaThumbnail", fields: [mediaId], references: [mediaId], onDelete: Cascade)
+  mediaId String? @unique
 
   @@map("thumbnails")
 }
@@ -87,8 +90,9 @@ model Media {
   format      String
   width       Int?
   height      Int?
-  Thumbnail   Thumbnail? @relation("mediaThumbnail", fields: [thumbnailId], references: [thumbnailId])
-  thumbnailId String?    @unique
+  Thumbnail   Thumbnail? @relation("mediaThumbnail")
+  // Thumbnail   Thumbnail? @relation("mediaThumbnail", fields: [thumbnailId], references: [thumbnailId], onDelete: Cascade)
+  // thumbnailId String?    @unique
   TagAvatar   Tag?       @relation("tagAvatar")
   TagCover    Tag?       @relation("tagCover")
 
