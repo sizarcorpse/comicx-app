@@ -300,6 +300,7 @@ export const tagService = {
       throw error;
     }
   },
+
   async deleteTag(tagId: string) {
     try {
       const tag = await prisma.tag.delete({

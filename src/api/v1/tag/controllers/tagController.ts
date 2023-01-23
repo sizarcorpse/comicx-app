@@ -1,4 +1,5 @@
 import { Express, NextFunction, Request, Response } from "express";
+import { get } from "lodash";
 import { tagService } from "../services/tagService";
 import { TagQueryParams } from "../type/Tag";
 import { schema } from "../validator/tagValidator";
@@ -19,12 +20,9 @@ export const tagController = {
     const { title, description, isFavorited } = req.body;
 
     const info = req.body;
-    const avatar = req.files["avatar-photo-file"]
-      ? req.files["avatar-photo-file"][0]
-      : null;
-    const cover = req.files["cover-photo-file"]
-      ? req.files["cover-photo-file"][0]
-      : null;
+
+    const avatar = get(req.files, "avatar-photo-file[0]", null);
+    const cover = get(req.files, "cover-photo-file[0]", null);
 
     try {
       const isError = schema.validate({
@@ -59,12 +57,8 @@ export const tagController = {
     const info = req.body;
     const tagId = req.params.tagId;
 
-    const avatar = req.files["avatar-photo-file"]
-      ? req.files["avatar-photo-file"][0]
-      : null;
-    const cover = req.files["cover-photo-file"]
-      ? req.files["cover-photo-file"][0]
-      : null;
+    const avatar = get(req.files, "avatar-photo-file[0]", null);
+    const cover = get(req.files, "cover-photo-file[0]", null);
 
     try {
       // const isError = schema.validate({
