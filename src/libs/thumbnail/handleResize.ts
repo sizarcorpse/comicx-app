@@ -38,7 +38,7 @@ export const handleResize = (
                   width: meta.width,
                   height: meta.height,
                   size: meta.size,
-                  destination: thumbnail_destination,
+                  path: thumbnail_destination,
                 },
               });
             });

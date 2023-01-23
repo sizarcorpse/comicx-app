@@ -68,7 +68,7 @@ model Thumbnail {
   width       Int
   height      Int
   size        Int
-  destination String
+  path        String
   // Media       Media? @relation("mediaThumbnail")
 
   Media   Media?  @relation("mediaThumbnail", fields: [mediaId], references: [mediaId], onDelete: Cascade)

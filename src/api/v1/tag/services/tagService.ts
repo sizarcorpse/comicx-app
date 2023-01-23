@@ -81,7 +81,7 @@ export const tagService = {
                           width: avatar.thumbnail.width,
                           height: avatar.thumbnail.height,
                           size: avatar.thumbnail.size,
-                          destination: avatar.thumbnail.destination,
+                          path: avatar.thumbnail.path,
                         },
                       }
                     : undefined,
@@ -129,7 +129,7 @@ export const tagService = {
       const promises = Object.entries(context).map(([key, value]) => {
         const file = value[0];
         if (file?.thumbnail) {
-          unlinkSync(file.thumbnail.destination);
+          unlinkSync(file.thumbnail.path);
         }
 
         return unlinkSync(file.path);
@@ -154,7 +154,7 @@ export const tagService = {
                 path: true,
                 Thumbnail: {
                   select: {
-                    destination: true,
+                    path: true,
                   },
                 },
               },
@@ -173,8 +173,7 @@ export const tagService = {
           if (avatar && destinations.Avatar) {
             const avatarMediaId = destinations.Avatar.mediaId;
             const avatarOriginalPath = destinations.Avatar.path;
-            const avatarThumbnailPath =
-              destinations.Avatar.Thumbnail.destination;
+            const avatarThumbnailPath = destinations.Avatar.Thumbnail.path;
 
             await prisma.media.delete({
               where: {
@@ -231,7 +230,7 @@ export const tagService = {
                           width: avatar.thumbnail.width,
                           height: avatar.thumbnail.height,
                           size: avatar.thumbnail.size,
-                          destination: avatar.thumbnail.destination,
+                          path: avatar.thumbnail.path,
                         },
                       }
                     : undefined,
@@ -322,7 +321,7 @@ export const tagService = {
       }
 
       const avatarOriginalPath = get(tag, "Avatar.path", []);
-      const avatarThumbnailPath = get(tag, "Avatar.Thumbnail.destination", []);
+      const avatarThumbnailPath = get(tag, "Avatar.Thumbnail.path", []);
       const coverOriginalPath = get(tag, "Cover.path", []);
 
       concat(avatarOriginalPath, coverOriginalPath, avatarThumbnailPath).map(
