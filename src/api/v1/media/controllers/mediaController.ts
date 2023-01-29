@@ -1,6 +1,7 @@
 import { Express, NextFunction, Request, Response } from "express";
 import fs from "fs";
 import mime from "mime-types";
+import path from "path";
 import { mediaService } from "../services/mediaService";
 
 export const mediaController = {
@@ -25,6 +26,21 @@ export const mediaController = {
 
       const stream = fs.createReadStream(data.path);
       res.setHeader("Content-Type", data.mimetype);
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+      stream.pipe(res);
+    } catch (error: any) {
+      res.status(400).json({ status: "NOT_OK", message: error.message });
+    }
+  },
+  // Optionally
+  async streamMediaWithFilename(req: Request, res: Response) {
+    const mediaFilename = req.params.filename;
+    try {
+      const data = await mediaService.getMediaFilename(mediaFilename);
+
+      const stream = fs.createReadStream(data.path);
+      res.setHeader("Content-Type", data.mimetype);
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
       stream.pipe(res);
     } catch (error: any) {
       res.status(400).json({ status: "NOT_OK", message: error.message });

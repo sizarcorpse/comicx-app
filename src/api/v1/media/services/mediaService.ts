@@ -24,6 +24,26 @@ export const mediaService = {
       throw error;
     }
   },
+  async getMediaFilename(filename: string) {
+    try {
+      const media = await prisma.media.findFirst({
+        where: {
+          filename,
+        },
+        include: {
+          Thumbnail: true,
+        },
+      });
+
+      if (!media) {
+        throw new Error("Media does not exists");
+      }
+
+      return media;
+    } catch (error: any) {
+      throw error;
+    }
+  },
   async getThumbInfo(thumbId: string) {
     try {
       const thumb = await prisma.thumbnail.findFirst({
