@@ -6,6 +6,7 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import v1ArtistRouter from "./api/v1/artist/routes/artistRoutes";
 import v1MediaRouter from "./api/v1/media/routes/mediaRoute";
 import v1TagRouter from "./api/v1/tag/routes/tagRoute";
 
@@ -34,6 +35,7 @@ app.post("/upload", galleryUploader, createThumbnail, async (req, res) => {
 // App.use Tag
 app.use("/tags", v1TagRouter);
 app.use("/media", v1MediaRouter);
+app.use("/artists", v1ArtistRouter);
 // App.use Album
 
 // App.use Artist
