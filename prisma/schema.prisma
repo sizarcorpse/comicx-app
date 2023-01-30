@@ -11,17 +11,36 @@ datasource db {
 }
 
 model Artist {
-  artistId          String         @id @default(uuid())
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  username          String         @unique
-  profilePhoto      String?
-  profileCoverPhoto String?
-  isFavorite        Boolean?
-  albums            Album[]
-  tags              TagsOnArtist[]
+  artistId       String         @id @default(uuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  username       String         @unique
+  Avatar         Media?         @relation("artistAvatar", fields: [avatarId], references: [mediaId])
+  avatarId       String?        @unique
+  Cover          Media?         @relation("artistCover", fields: [coverId], references: [mediaId])
+  coverId        String?        @unique
+  biography      String?        @default("The universe is a never-ending exploration of the unknown.")
+  isFavorite     Boolean?       @default(false)
+  isActive       Boolean?       @default(true)
+  Social         Social[]
+  albums         Album[]
+  tags           TagsOnArtist[]
+  collaborations Artist[]       @relation("artistCollabor")
+  Collaborator   Artist?        @relation("artistCollabor", fields: [collaboratorId], references: [artistId])
+  collaboratorId String?
 
   @@map("artists")
+}
+
+model Social {
+  socialId String  @id @default(uuid())
+  name     String
+  link     String
+  Artist   Artist? @relation(fields: [artistId], references: [artistId])
+  artistId String?
+
+  @@index([artistId, link])
+  @@map("socials")
 }
 
 enum Language {
@@ -78,23 +97,25 @@ model Thumbnail {
 }
 
 model Media {
-  mediaId     String     @id @default(uuid())
-  Album       Album?     @relation(fields: [albumId], references: [albumId])
-  albumId     String?
-  fieldname   String
-  mimetype    String
-  destination String
-  filename    String
-  path        String
-  size        Int
-  format      String
-  width       Int?
-  height      Int?
-  Thumbnail   Thumbnail? @relation("mediaThumbnail")
-  Tag         Tag?       @relation("tagAvatar", fields: [tagId], references: [tagId], onDelete: Cascade)
-  tagId       String?    @unique
-  Cover       Tag?       @relation("tagCover", fields: [coverId], references: [tagId], onDelete: Cascade)
-  coverId     String?    @unique
+  mediaId      String     @id @default(uuid())
+  Album        Album?     @relation(fields: [albumId], references: [albumId])
+  albumId      String?
+  fieldname    String
+  mimetype     String
+  destination  String
+  filename     String
+  path         String
+  size         Int
+  format       String
+  width        Int?
+  height       Int?
+  Thumbnail    Thumbnail? @relation("mediaThumbnail")
+  Tag          Tag?       @relation("tagAvatar", fields: [tagId], references: [tagId], onDelete: Cascade)
+  tagId        String?    @unique
+  Cover        Tag?       @relation("tagCover", fields: [coverId], references: [tagId], onDelete: Cascade)
+  coverId      String?    @unique
+  ArtistAvatar Artist?    @relation("artistAvatar")
+  ArtistCover  Artist?    @relation("artistCover")
 
   @@map("media")
 }
