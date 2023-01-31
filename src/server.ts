@@ -6,7 +6,7 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import { errorHandler, notFound } from "./libs/errors/errorHandlers";
+import { errorHandler, notFound } from "./middlewares/errors/errorHandlers";
 
 import v1ArtistRouter from "./api/v1/artist/routes/artistRoutes";
 import v1MediaRouter from "./api/v1/media/routes/mediaRoute";

@@ -1,5 +1,8 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Express, NextFunction, Request, Response } from "express";
+
+import { mediaService } from "../../media/services/mediaService";
+
 const prisma = new PrismaClient();
 
 export const artistService = {
@@ -138,6 +141,18 @@ export const artistService = {
 
   async updateArtistProfileAvatar(artistId: string, avatar: any) {
     try {
+      const oldAvatarId = await prisma.artist.findUnique({
+        where: {
+          artistId,
+        },
+        select: {
+          Avatar: {
+            select: {
+              mediaId: true,
+            },
+          },
+        },
+      });
       const artist = await prisma.artist.update({
         where: {
           artistId: artistId,
@@ -178,11 +193,10 @@ export const artistService = {
           },
         },
       });
-
       if (!artist) {
         throw new Error("Artist profile photo update has been failed");
       }
-
+      await mediaService.deleteMedia(oldAvatarId.Avatar.mediaId);
       return artist;
     } catch (error: any) {
       throw new Error(error.message);
@@ -191,6 +205,19 @@ export const artistService = {
 
   async updateArtistProfileCover(artistId: string, cover: any) {
     try {
+      const oldCoverId = await prisma.artist.findUnique({
+        where: {
+          artistId,
+        },
+        select: {
+          Cover: {
+            select: {
+              mediaId: true,
+            },
+          },
+        },
+      });
+
       const artist = await prisma.artist.update({
         where: {
           artistId: artistId,
@@ -220,7 +247,7 @@ export const artistService = {
       if (!artist) {
         throw new Error("Artist profile photo update has been failed");
       }
-
+      await mediaService.deleteMedia(oldCoverId.Cover.mediaId);
       return artist;
     } catch (error: any) {
       throw new Error(error.message);

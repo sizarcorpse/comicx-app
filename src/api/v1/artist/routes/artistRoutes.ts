@@ -6,7 +6,12 @@ import uploader from "../../../../middlewares/uploader/uploader";
 
 const router = express.Router();
 router.get("/", artistController.getAllArtist);
-router.post("/new", uploader, artistController.createNewArtist);
+router.post(
+  "/new",
+  uploader,
+  useCreateThumbnail,
+  artistController.createNewArtist
+);
 router.patch(
   "/:artistId/update/profile",
   uploader,
@@ -24,4 +29,5 @@ router.patch(
   useCreateThumbnail,
   artistController.updateArtistProfileCover
 );
+
 export default router;
