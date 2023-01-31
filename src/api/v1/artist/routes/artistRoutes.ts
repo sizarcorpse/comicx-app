@@ -29,5 +29,17 @@ router.patch(
   useCreateThumbnail,
   artistController.updateArtistProfileCover
 );
+router.post(
+  "/:artistId/update/profile/social",
+  artistController.addArtistSocialLink
+);
+router.delete(
+  "/:artistId/update/profile/social/:socialId",
+  artistController.deleteArtistSocialLink
+);
+router.patch(
+  "/:artistId/update/profile/social/:socialId",
+  artistController.updateArtistSocialLink
+);
 
 export default router;

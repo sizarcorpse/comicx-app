@@ -17,6 +17,7 @@ export const artistService = {
           },
           Cover: true,
           collaborations: true,
+          Social: true,
         },
       });
       return artists;
@@ -62,6 +63,7 @@ export const artistService = {
       const artist = await prisma.artist.create({
         data: {
           username: info.username,
+          alias: info.alias,
           Avatar: avatar
             ? {
                 create: {
@@ -116,6 +118,7 @@ export const artistService = {
         },
         data: {
           username: info.username,
+          alias: info.alias,
           biography: info.biography,
           isFavorite: info.isFavorite && JSON.parse(info.isFavorite),
           isActive: info.isActive && JSON.parse(info.isActive),
@@ -252,5 +255,64 @@ export const artistService = {
     } catch (error: any) {
       throw new Error(error.message);
     }
+  },
+
+  async addArtistSocialLink(artistId: string, social: any) {
+    const socialLink = await prisma.social.create({
+      data: {
+        Artist: {
+          connect: {
+            artistId: artistId,
+          },
+        },
+        name: social.name,
+        link: social.link,
+      },
+    });
+
+    if (!socialLink) {
+      throw new Error("Social link not added");
+    }
+    return socialLink;
+  },
+
+  async deleteArtistSocialLink(artistId: string, socialId: any) {
+    const socialLink = await prisma.social.delete({
+      where: {
+        socialId_artistId: {
+          socialId,
+          artistId,
+        },
+      },
+    });
+
+    if (!socialLink) {
+      throw new Error("Social link not added");
+    }
+    return socialLink;
+  },
+
+  async updateArtistSocialLink(
+    artistId: string,
+    socialId: string,
+    social: any
+  ) {
+    const socialLink = await prisma.social.update({
+      where: {
+        socialId_artistId: {
+          socialId,
+          artistId,
+        },
+      },
+      data: {
+        name: social.name,
+        link: social.link,
+      },
+    });
+
+    if (!socialLink) {
+      throw new Error("Social link not added");
+    }
+    return socialLink;
   },
 };
