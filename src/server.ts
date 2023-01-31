@@ -6,6 +6,8 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import { errorHandler, notFound } from "./libs/errors/errorHandlers";
+
 import v1ArtistRouter from "./api/v1/artist/routes/artistRoutes";
 import v1MediaRouter from "./api/v1/media/routes/mediaRoute";
 import v1TagRouter from "./api/v1/tag/routes/tagRoute";
@@ -42,10 +44,8 @@ app.use("/artists", v1ArtistRouter);
 
 const port = process.env.PORT;
 
-app.use((req, res, next) => {
-  res.status(404).send({ status: "NOT OK", error: "Not found" });
-});
-
+app.use(notFound);
+app.use(errorHandler);
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
