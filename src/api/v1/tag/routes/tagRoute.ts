@@ -2,8 +2,8 @@ import express from "express";
 import { tagController } from "../controllers/tagController";
 import { queryHandler } from "../middlewares/tagMiddleware";
 
-import useCreateThumbnail from "../../../../libs/thumbnail/useCreateThumbnail";
-import uploader from "../../../../libs/uploader/uploader";
+import useCreateThumbnail from "../../../../middlewares/thumbnail/useCreateThumbnail";
+import uploader from "../../../../middlewares/uploader/uploader";
 
 const router = express.Router();
 
