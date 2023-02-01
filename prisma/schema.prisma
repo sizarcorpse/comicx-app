@@ -11,24 +11,23 @@ datasource db {
 }
 
 model Artist {
-  artistId       String         @id @default(uuid())
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  username       String         @unique
-  alias          String?
-  Avatar         Media?         @relation("artistAvatar", fields: [avatarId], references: [mediaId])
-  avatarId       String?        @unique
-  Cover          Media?         @relation("artistCover", fields: [coverId], references: [mediaId])
-  coverId        String?        @unique
-  biography      String?        @default("The universe is a never-ending exploration of the unknown.")
-  isFavorite     Boolean?       @default(false)
-  isActive       Boolean?       @default(true)
-  Social         Social[]
-  albums         Album[]
-  tags           TagsOnArtist[]
-  collaborations Artist[]       @relation("artistCollabor")
-  Collaborator   Artist?        @relation("artistCollabor", fields: [collaboratorId], references: [artistId])
-  collaboratorId String?
+  artistId         String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  username         String         @unique
+  alias            String?
+  Avatar           Media?         @relation("artistAvatar", fields: [avatarId], references: [mediaId])
+  avatarId         String?        @unique
+  Cover            Media?         @relation("artistCover", fields: [coverId], references: [mediaId])
+  coverId          String?        @unique
+  biography        String?        @default("The universe is a never-ending exploration of the unknown.")
+  isFavorite       Boolean?       @default(false)
+  isActive         Boolean?       @default(true)
+  Social           Social[]
+  albums           Album[]
+  tags             TagsOnArtist[]
+  collaborations   Artist[]       @relation("collaborations")
+  ArtistCollection Artist[]       @relation("collaborations")
 
   @@map("artists")
 }
