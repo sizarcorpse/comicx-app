@@ -5,48 +5,41 @@ import useCreateThumbnail from "../../../../middlewares/thumbnail/useCreateThumb
 import uploader from "../../../../middlewares/uploader/uploader";
 
 const router = express.Router();
-router.get("/", artistController.getAllArtist);
+router.get("/", artistController.getArtists);
 router.post(
   "/new",
   uploader,
   useCreateThumbnail,
-  artistController.createNewArtist
+  artistController.createArtist
 );
+router.patch("/:artistId/update", uploader, artistController.updateArtist);
 router.patch(
-  "/:artistId/update/profile",
-  uploader,
-  artistController.updateArtistProfile
-);
-router.patch(
-  "/:artistId/update/profile/avatar",
+  "/:artistId/update/avatar",
   uploader,
   useCreateThumbnail,
-  artistController.updateArtistProfileAvatar
+  artistController.updateArtistAvatar
 );
 router.patch(
-  "/:artistId/update/profile/cover",
+  "/:artistId/update/cover",
   uploader,
   useCreateThumbnail,
-  artistController.updateArtistProfileCover
+  artistController.updateArtistCover
 );
-router.post(
-  "/:artistId/update/profile/social",
-  artistController.addArtistSocialLink
+router.post("/:artistId/update/social", artistController.addArtistSocial);
+router.patch(
+  "/:artistId/update/social/:socialId",
+  artistController.updateArtistSocial
 );
 router.delete(
-  "/:artistId/update/profile/social/:socialId",
-  artistController.deleteArtistSocialLink
+  "/:artistId/update/social/:socialId",
+  artistController.removeArtistSocial
 );
 router.patch(
-  "/:artistId/update/profile/social/:socialId",
-  artistController.updateArtistSocialLink
-);
-router.patch(
-  "/:artistId/update/profile/collaborations/:collaboratorId",
-  artistController.updateArtistProfileCollaboration
+  "/:artistId/collaboration/:collaboratorId",
+  artistController.addArtistCollaboration
 );
 router.delete(
-  "/:artistId/update/profile/collaborations/:collaboratorId",
-  artistController.removeArtistProfileCollaboration
+  "/:artistId/collaboration/:collaboratorId",
+  artistController.removeArtistCollaboration
 );
 export default router;

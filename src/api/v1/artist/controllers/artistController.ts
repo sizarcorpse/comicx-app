@@ -7,9 +7,9 @@ import {
 } from "../validators/artistValidator";
 
 export const artistController = {
-  async getAllArtist(req: Request, res: Response, next: NextFunction) {
+  async getArtists(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await artistService.getAllArtist();
+      const data = await artistService.getArtists();
 
       res.status(200).json({ status: "OK", data: data });
     } catch (error: any) {
@@ -17,7 +17,7 @@ export const artistController = {
     }
   },
 
-  async createNewArtist(req: Request, res: Response, next: NextFunction) {
+  async createArtist(req: Request, res: Response, next: NextFunction) {
     const { username, alias } = req.body;
     const avatar = get(req.files, "avatar-photo-file[0]", null);
 
@@ -26,7 +26,7 @@ export const artistController = {
       if (error) {
         throw new Error(error.message);
       }
-      const data = await artistService.createNewArtist(
+      const data = await artistService.createArtist(
         { username, alias },
         avatar
       );
@@ -39,7 +39,7 @@ export const artistController = {
     }
   },
 
-  async updateArtistProfile(req: Request, res: Response, next: NextFunction) {
+  async updateArtist(req: Request, res: Response, next: NextFunction) {
     const { username, alias, isFavorite, isActive, biography } = req.body;
     const artistId = req.params.artistId;
     try {
@@ -82,11 +82,7 @@ export const artistController = {
     }
   },
 
-  async updateArtistProfileAvatar(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async updateArtistAvatar(req: Request, res: Response, next: NextFunction) {
     const artistId = req.params.artistId;
     const avatar = get(req.files, "avatar-photo-file[0]", null);
     try {
@@ -95,10 +91,7 @@ export const artistController = {
         throw new Error("Artist not found");
       }
 
-      const data = await artistService.updateArtistProfileAvatar(
-        artistId,
-        avatar
-      );
+      const data = await artistService.updateArtistAvatar(artistId, avatar);
       res.status(200).json({
         status: "OK",
         data: data,
@@ -111,11 +104,7 @@ export const artistController = {
     }
   },
 
-  async updateArtistProfileCover(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async updateArtistCover(req: Request, res: Response, next: NextFunction) {
     const artistId = req.params.artistId;
     const cover = get(req.files, "cover-photo-file[0]", null);
     try {
@@ -126,10 +115,7 @@ export const artistController = {
 
       console.log(cover);
 
-      const data = await artistService.updateArtistProfileCover(
-        artistId,
-        cover
-      );
+      const data = await artistService.updateArtistCover(artistId, cover);
       res.status(200).json({
         status: "OK",
         data: data,
@@ -142,7 +128,7 @@ export const artistController = {
     }
   },
 
-  async addArtistSocialLink(req: Request, res: Response, next: NextFunction) {
+  async addArtistSocial(req: Request, res: Response, next: NextFunction) {
     const artistId = req.params.artistId;
     const { name, link } = req.body;
     try {
@@ -151,7 +137,7 @@ export const artistController = {
         throw new Error(error.message);
       }
 
-      const data = await artistService.addArtistSocialLink(artistId, {
+      const data = await artistService.addArtistSocial(artistId, {
         name,
         link,
       });
@@ -165,18 +151,11 @@ export const artistController = {
     }
   },
 
-  async deleteArtistSocialLink(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async removeArtistSocial(req: Request, res: Response, next: NextFunction) {
     const artistId = req.params.artistId;
     const socialId = req.params.socialId;
     try {
-      const data = await artistService.deleteArtistSocialLink(
-        artistId,
-        socialId
-      );
+      const data = await artistService.removeArtistSocial(artistId, socialId);
 
       res.status(200).json({
         status: "OK",
@@ -188,11 +167,7 @@ export const artistController = {
     }
   },
 
-  async updateArtistSocialLink(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async updateArtistSocial(req: Request, res: Response, next: NextFunction) {
     const artistId = req.params.artistId;
     const socialId = req.params.socialId;
     const { name, link } = req.body;
@@ -201,14 +176,10 @@ export const artistController = {
       if (error) {
         throw new Error(error.message);
       }
-      const data = await artistService.updateArtistSocialLink(
-        artistId,
-        socialId,
-        {
-          name,
-          link,
-        }
-      );
+      const data = await artistService.updateArtistSocial(artistId, socialId, {
+        name,
+        link,
+      });
       res.status(200).json({
         status: "OK",
         message: "Social Link updated successfully",
@@ -219,7 +190,7 @@ export const artistController = {
     }
   },
 
-  async updateArtistProfileCollaboration(
+  async addArtistCollaboration(
     req: Request,
     res: Response,
     next: NextFunction
@@ -228,7 +199,7 @@ export const artistController = {
     const collaboratorId = req.params.collaboratorId;
 
     try {
-      const data = await artistService.updateArtistProfileCollaboration(
+      const data = await artistService.addArtistCollaboration(
         artistId,
         collaboratorId
       );
@@ -241,7 +212,8 @@ export const artistController = {
       next(error);
     }
   },
-  async removeArtistProfileCollaboration(
+
+  async removeArtistCollaboration(
     req: Request,
     res: Response,
     next: NextFunction
@@ -250,7 +222,7 @@ export const artistController = {
     const collaboratorId = req.params.collaboratorId;
 
     try {
-      const data = await artistService.removeArtistProfileCollaboration(
+      const data = await artistService.removeArtistCollaboration(
         artistId,
         collaboratorId
       );

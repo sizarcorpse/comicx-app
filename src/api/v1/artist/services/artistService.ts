@@ -6,7 +6,7 @@ import { mediaService } from "../../media/services/mediaService";
 const prisma = new PrismaClient();
 
 export const artistService = {
-  async getAllArtist() {
+  async getArtists() {
     try {
       const artists = await prisma.artist.findMany({
         include: {
@@ -59,7 +59,7 @@ export const artistService = {
     }
   },
 
-  async createNewArtist(info: any, avatar: any) {
+  async createArtist(info: any, avatar: any) {
     try {
       const artist = await prisma.artist.create({
         data: {
@@ -143,7 +143,7 @@ export const artistService = {
     }
   },
 
-  async updateArtistProfileAvatar(artistId: string, avatar: any) {
+  async updateArtistAvatar(artistId: string, avatar: any) {
     try {
       const oldAvatarId = await prisma.artist.findUnique({
         where: {
@@ -200,14 +200,16 @@ export const artistService = {
       if (!artist) {
         throw new Error("Artist profile photo update has been failed");
       }
-      await mediaService.deleteMedia(oldAvatarId.Avatar.mediaId);
+      if (oldAvatarId) {
+        await mediaService.deleteMedia(oldAvatarId.Avatar.mediaId);
+      }
       return artist;
     } catch (error: any) {
       throw new Error(error.message);
     }
   },
 
-  async updateArtistProfileCover(artistId: string, cover: any) {
+  async updateArtistCover(artistId: string, cover: any) {
     try {
       const oldCoverId = await prisma.artist.findUnique({
         where: {
@@ -251,14 +253,18 @@ export const artistService = {
       if (!artist) {
         throw new Error("Artist profile photo update has been failed");
       }
-      await mediaService.deleteMedia(oldCoverId.Cover.mediaId);
+
+      if (oldCoverId) {
+        await mediaService.deleteMedia(oldCoverId.Cover.mediaId);
+      }
+
       return artist;
     } catch (error: any) {
       throw new Error(error.message);
     }
   },
 
-  async addArtistSocialLink(artistId: string, social: any) {
+  async addArtistSocial(artistId: string, social: any) {
     const socialLink = await prisma.social.create({
       data: {
         Artist: {
@@ -277,7 +283,7 @@ export const artistService = {
     return socialLink;
   },
 
-  async deleteArtistSocialLink(artistId: string, socialId: any) {
+  async removeArtistSocial(artistId: string, socialId: any) {
     const socialLink = await prisma.social.delete({
       where: {
         socialId_artistId: {
@@ -293,11 +299,7 @@ export const artistService = {
     return socialLink;
   },
 
-  async updateArtistSocialLink(
-    artistId: string,
-    socialId: string,
-    social: any
-  ) {
+  async updateArtistSocial(artistId: string, socialId: string, social: any) {
     const socialLink = await prisma.social.update({
       where: {
         socialId_artistId: {
@@ -317,10 +319,7 @@ export const artistService = {
     return socialLink;
   },
 
-  async updateArtistProfileCollaboration(
-    artistId: string,
-    collaboratorId: string
-  ) {
+  async addArtistCollaboration(artistId: string, collaboratorId: string) {
     const artist = await prisma.artist.update({
       where: {
         artistId: artistId,
@@ -350,10 +349,7 @@ export const artistService = {
     return artist;
   },
 
-  async removeArtistProfileCollaboration(
-    artistId: string,
-    collaboratorId: string
-  ) {
+  async removeArtistCollaboration(artistId: string, collaboratorId: string) {
     const artist = await prisma.artist.update({
       where: {
         artistId: artistId,
