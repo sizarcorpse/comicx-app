@@ -41,5 +41,12 @@ router.patch(
   "/:artistId/update/profile/social/:socialId",
   artistController.updateArtistSocialLink
 );
-
+router.patch(
+  "/:artistId/update/profile/collaborations/:collaboratorId",
+  artistController.updateArtistProfileCollaboration
+);
+router.delete(
+  "/:artistId/update/profile/collaborations/:collaboratorId",
+  artistController.removeArtistProfileCollaboration
+);
 export default router;

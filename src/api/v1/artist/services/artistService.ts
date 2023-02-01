@@ -16,6 +16,7 @@ export const artistService = {
             },
           },
           Cover: true,
+
           collaborations: true,
           Social: true,
         },
@@ -314,5 +315,71 @@ export const artistService = {
       throw new Error("Social link not added");
     }
     return socialLink;
+  },
+
+  async updateArtistProfileCollaboration(
+    artistId: string,
+    collaboratorId: string
+  ) {
+    const artist = await prisma.artist.update({
+      where: {
+        artistId: artistId,
+      },
+      data: {
+        collaborations: {
+          connect: {
+            artistId: collaboratorId,
+          },
+        },
+      },
+    });
+
+    await prisma.artist.update({
+      where: {
+        artistId: collaboratorId,
+      },
+      data: {
+        collaborations: {
+          connect: {
+            artistId,
+          },
+        },
+      },
+    });
+
+    return artist;
+  },
+
+  async removeArtistProfileCollaboration(
+    artistId: string,
+    collaboratorId: string
+  ) {
+    const artist = await prisma.artist.update({
+      where: {
+        artistId: artistId,
+      },
+      data: {
+        collaborations: {
+          disconnect: {
+            artistId: collaboratorId,
+          },
+        },
+      },
+    });
+
+    await prisma.artist.update({
+      where: {
+        artistId: collaboratorId,
+      },
+      data: {
+        collaborations: {
+          disconnect: {
+            artistId,
+          },
+        },
+      },
+    });
+
+    return artist;
   },
 };

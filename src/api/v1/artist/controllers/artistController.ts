@@ -218,4 +218,49 @@ export const artistController = {
       next(error);
     }
   },
+
+  async updateArtistProfileCollaboration(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const artistId = req.params.artistId;
+    const collaboratorId = req.params.collaboratorId;
+
+    try {
+      const data = await artistService.updateArtistProfileCollaboration(
+        artistId,
+        collaboratorId
+      );
+      res.status(200).json({
+        status: "OK",
+        message: "Collaboration updated successfully",
+        data: data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async removeArtistProfileCollaboration(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const artistId = req.params.artistId;
+    const collaboratorId = req.params.collaboratorId;
+
+    try {
+      const data = await artistService.removeArtistProfileCollaboration(
+        artistId,
+        collaboratorId
+      );
+      res.status(200).json({
+        status: "OK",
+        message: "Collaboration updated successfully",
+        data: data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
