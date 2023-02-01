@@ -7,10 +7,10 @@ import uploader from "../../../../middlewares/uploader/uploader";
 
 const router = express.Router();
 
-router.get("/", queryHandler, tagController.getAllTags);
-router.post("/new", uploader, useCreateThumbnail, tagController.createNewTag);
+router.get("/", queryHandler, tagController.getTags);
+router.post("/new", uploader, useCreateThumbnail, tagController.createTag);
 router.patch(
-  "/edit/:tagId",
+  "/update/:tagId",
   uploader,
   useCreateThumbnail,
   tagController.updateTag

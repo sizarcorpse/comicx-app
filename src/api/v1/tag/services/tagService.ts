@@ -1,11 +1,13 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import fs, { unlink, unlinkSync } from "fs";
 import { concat, get } from "lodash";
+import { mediaService } from "../../media/services/mediaService";
 import { Tag, TagQueryParams } from "../type/Tag";
+
 const prisma = new PrismaClient();
 
 export const tagService = {
-  async getAllTags(context: any) {
+  async getTags(context: any) {
     const { sort, order, limit, skip }: TagQueryParams = context;
 
     try {
@@ -43,11 +45,11 @@ export const tagService = {
     }
   },
 
-  async tagExitsById(id: string) {
+  async tagExitsById(tagId: string) {
     try {
       const result = await prisma.tag.findUnique({
         where: {
-          tagId: id,
+          tagId,
         },
       });
       return result;
@@ -56,7 +58,7 @@ export const tagService = {
     }
   },
 
-  async createNewTag(info: any, avatar: any, cover: any) {
+  async createTag(info: any, avatar: any, cover: any) {
     try {
       const result = await prisma.tag.create({
         data: {
@@ -124,24 +126,9 @@ export const tagService = {
     }
   },
 
-  async unlinkTagContentPhoto(context) {
-    try {
-      const promises = Object.entries(context).map(([key, value]) => {
-        const file = value[0];
-        if (file?.thumbnail) {
-          unlinkSync(file.thumbnail.path);
-        }
-
-        return unlinkSync(file.path);
-      });
-
-      Promise.all(promises);
-    } catch (error) {}
-  },
-
   async updateTag(tagId: string, info: any, avatar: any, cover: any) {
     try {
-      // If new avatar or cover is updated ? remove current file from storage.
+      // If new avatar or cover is updated ? remove current file from disk storage.
       if (avatar || cover) {
         const destinations: any = await prisma.tag.findUnique({
           where: {
@@ -151,18 +138,11 @@ export const tagService = {
             Avatar: {
               select: {
                 mediaId: true,
-                path: true,
-                Thumbnail: {
-                  select: {
-                    path: true,
-                  },
-                },
               },
             },
             Cover: {
               select: {
                 mediaId: true,
-                path: true,
               },
             },
           },
@@ -172,38 +152,19 @@ export const tagService = {
           // If Tag already has an Avatar ? update Avatar with new Avatar
           if (avatar && destinations.Avatar) {
             const avatarMediaId = destinations.Avatar.mediaId;
-            const avatarOriginalPath = destinations.Avatar.path;
-            const avatarThumbnailPath = destinations.Avatar.Thumbnail.path;
-
-            await prisma.media.delete({
-              where: {
-                mediaId: avatarMediaId,
-              },
-            });
-
-            concat(avatarOriginalPath, avatarThumbnailPath).map((path) => {
-              unlinkSync(path);
-            });
+            await mediaService.deleteMedia(avatarMediaId);
           }
 
           // If Tag already has an Cover ? update Avatar with new Cover
           if (cover && destinations.Cover) {
-            const coverOriginalPath = destinations.Cover.path;
             const coverMediaId = destinations.Cover.mediaId;
-            await prisma.media.delete({
-              where: {
-                mediaId: coverMediaId,
-              },
-            });
-            if (coverOriginalPath) {
-              unlinkSync(coverOriginalPath);
-            }
+            await mediaService.deleteMedia(coverMediaId);
           }
         }
       }
 
       // Update Tag with provided fields
-      const updateTag = await prisma.tag.update({
+      const updatedTag = await prisma.tag.update({
         where: {
           tagId: tagId,
         },
@@ -263,11 +224,11 @@ export const tagService = {
         },
       });
 
-      if (!updateTag) {
+      if (!updatedTag) {
         throw new Error("Create tag failed");
       }
 
-      return updateTag;
+      return updatedTag;
     } catch (error: any) {
       throw error;
     }
@@ -302,7 +263,7 @@ export const tagService = {
 
   async deleteTag(tagId: string) {
     try {
-      const tag = await prisma.tag.delete({
+      const deletedTag = await prisma.tag.delete({
         where: {
           tagId: tagId,
         },
@@ -316,14 +277,13 @@ export const tagService = {
         },
       });
 
-      if (!tag) {
+      if (!deletedTag) {
         throw new Error("Tag does not exists");
       }
 
-      const avatarOriginalPath = get(tag, "Avatar.path", []);
-      const avatarThumbnailPath = get(tag, "Avatar.Thumbnail.path", []);
-      const coverOriginalPath = get(tag, "Cover.path", []);
-
+      const avatarOriginalPath = get(deletedTag, "Avatar.path", []);
+      const avatarThumbnailPath = get(deletedTag, "Avatar.Thumbnail.path", []);
+      const coverOriginalPath = get(deletedTag, "Cover.path", []);
       concat(avatarOriginalPath, coverOriginalPath, avatarThumbnailPath).map(
         (item) => {
           if (item != "" || item != undefined) {
@@ -332,7 +292,7 @@ export const tagService = {
         }
       );
 
-      return tag;
+      return deletedTag;
     } catch (error: any) {
       throw error;
     }

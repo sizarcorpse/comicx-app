@@ -1,51 +1,50 @@
 import { Express, NextFunction, Request, Response } from "express";
 import { get } from "lodash";
+import { mediaService } from "../../media/services/mediaService";
 import { tagService } from "../services/tagService";
 import { TagQueryParams } from "../type/Tag";
-import { schema } from "../validator/tagValidator";
+import { tagValidator } from "../validator/tagValidator";
 
 export const tagController = {
-  async getAllTags(req: Request, res: Response, next: NextFunction) {
+  async getTags(req: Request, res: Response, next: NextFunction) {
     const context: TagQueryParams = req.query;
 
     try {
-      const data = await tagService.getAllTags(context);
+      const data = await tagService.getTags(context);
       res.status(200).json({ status: "OK", data: data });
     } catch (error: any) {
       res.status(400).json({ status: "NOT_OK", message: error.message });
     }
   },
 
-  async createNewTag(req: Request, res: Response, next: NextFunction) {
+  async createTag(req: Request, res: Response, next: NextFunction) {
     const { title, description, isFavorited } = req.body;
-
     const info = req.body;
-
     const avatar = get(req.files, "avatar-photo-file[0]", null);
     const cover = get(req.files, "cover-photo-file[0]", null);
 
     try {
-      const isError = schema.validate({
-        title,
-        description,
-        isFavorited,
-      });
-
+      const isError = tagValidator(
+        {
+          title,
+          description,
+          isFavorited,
+        },
+        "post"
+      );
       if (isError.error) {
         throw new Error("Validations failed");
       }
 
       const isTitleExist = await tagService.tagExitsByTitle(info.title);
-
       if (isTitleExist) {
         throw new Error("Tag already exists");
       }
 
-      const data = await tagService.createNewTag(info, avatar, cover);
-
+      const data = await tagService.createTag(info, avatar, cover);
       res.status(200).json({ status: "OK", data: data });
     } catch (error: any) {
-      await tagService.unlinkTagContentPhoto(req.files);
+      await mediaService.unlinkMedia(req.files);
       res.status(400).json({
         status: "NOT_OK",
         message: error.message,
@@ -56,19 +55,14 @@ export const tagController = {
   async updateTag(req: Request, res: Response, next: NextFunction) {
     const info = req.body;
     const tagId = req.params.tagId;
-
     const avatar = get(req.files, "avatar-photo-file[0]", null);
     const cover = get(req.files, "cover-photo-file[0]", null);
 
     try {
-      // const isError = schema.validate({
-      //   title: info.title,
-      //   description: info.description,
-      //   isFavorited: info.isFavorited,
-      // });
-      // if (isError.error) {
-      //   throw new Error("Validations failed");
-      // }
+      const isError = tagValidator(info, "patch");
+      if (isError.error) {
+        throw new Error("Validations failed");
+      }
 
       const isIdExist = await tagService.tagExitsById(tagId);
       if (!isIdExist) {
@@ -83,10 +77,9 @@ export const tagController = {
       }
 
       const data = await tagService.updateTag(tagId, info, avatar, cover);
-
       res.status(200).json({ status: "OK", data });
     } catch (error: any) {
-      await tagService.unlinkTagContentPhoto(req.files);
+      await mediaService.unlinkMedia(req.files);
       res.status(400).json({
         status: "NOT_OK",
         message: error.message,
@@ -99,7 +92,6 @@ export const tagController = {
 
     try {
       const data = await tagService.getTag(tagId);
-
       res.status(200).json({ status: "OK", data });
     } catch (error: any) {
       res.status(400).json({
