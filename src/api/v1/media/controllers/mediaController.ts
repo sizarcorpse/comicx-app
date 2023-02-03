@@ -1,7 +1,6 @@
 import { Express, NextFunction, Request, Response } from "express";
 import fs from "fs";
 import mime from "mime-types";
-import path from "path";
 import { mediaService } from "../services/mediaService";
 
 export const mediaController = {
@@ -32,7 +31,7 @@ export const mediaController = {
       res.status(400).json({ status: "NOT_OK", message: error.message });
     }
   },
-  // Optionally
+
   async streamMediaWithFilename(req: Request, res: Response) {
     const mediaFilename = req.params.filename;
     try {

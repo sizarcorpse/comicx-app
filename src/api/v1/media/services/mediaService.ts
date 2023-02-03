@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import fs, { unlinkSync } from "fs";
+import { unlinkSync } from "fs";
 import { concat, get } from "lodash";
 
 const prisma = new PrismaClient();
@@ -61,7 +61,6 @@ export const mediaService = {
       throw error;
     }
   },
-
   async deleteMedia(mediaId: string) {
     try {
       const media = await prisma.media.delete({
@@ -90,5 +89,17 @@ export const mediaService = {
     } catch (error) {
       throw error;
     }
+  },
+  async unlinkMedia(files: any) {
+    try {
+      const promises = Object.entries(files).map(([key, value]) => {
+        const file = value[0];
+        if (file?.thumbnail) {
+          unlinkSync(file.thumbnail.path);
+        }
+        return unlinkSync(file.path);
+      });
+      Promise.all(promises);
+    } catch (error) {}
   },
 };
