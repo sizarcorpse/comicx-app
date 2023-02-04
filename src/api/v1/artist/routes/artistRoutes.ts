@@ -3,6 +3,7 @@ import { artistController } from "../controllers/artistController";
 
 import useCreateThumbnail from "../../../../middlewares/thumbnail/useCreateThumbnail";
 import uploader from "../../../../middlewares/uploader/uploader";
+import { queryHandler } from "../middlewares/queryHandler";
 
 const router = express.Router();
 router.get("/", artistController.getArtists);
@@ -41,5 +42,10 @@ router.patch(
 router.delete(
   "/:artistId/collaboration/:collaboratorId",
   artistController.removeArtistCollaboration
+);
+router.get(
+  "/:artistId/collaborations",
+  queryHandler,
+  artistController.getCollaborations
 );
 export default router;

@@ -200,7 +200,8 @@ export const artistService = {
       if (!artist) {
         throw new Error("Artist profile photo update has been failed");
       }
-      if (oldAvatarId) {
+
+      if (oldAvatarId?.Avatar) {
         await mediaService.deleteMedia(oldAvatarId.Avatar.mediaId);
       }
       return artist;
@@ -254,7 +255,7 @@ export const artistService = {
         throw new Error("Artist profile photo update has been failed");
       }
 
-      if (oldCoverId) {
+      if (oldCoverId?.Cover) {
         await mediaService.deleteMedia(oldCoverId.Cover.mediaId);
       }
 
@@ -377,5 +378,25 @@ export const artistService = {
     });
 
     return artist;
+  },
+
+  async getCollaborations(artistId: string, queries) {
+    const { sort, order, limit, skip } = queries;
+    const collaboration = await prisma.artist.findUnique({
+      where: {
+        artistId: artistId,
+      },
+      select: {
+        collaborations: {
+          skip: parseInt(skip),
+          take: parseInt(limit),
+          orderBy: {
+            [sort]: order,
+          },
+        },
+      },
+    });
+
+    return collaboration;
   },
 };

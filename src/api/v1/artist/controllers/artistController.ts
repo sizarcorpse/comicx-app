@@ -6,6 +6,8 @@ import {
   socialLinkValidator,
 } from "../validators/artistValidator";
 
+import { mediaService } from "../../media/services/mediaService";
+
 export const artistController = {
   async getArtists(req: Request, res: Response, next: NextFunction) {
     try {
@@ -97,6 +99,7 @@ export const artistController = {
         data: data,
       });
     } catch (error: any) {
+      await mediaService.unlinkMedia(req.files);
       res.status(400).json({
         status: "NOT_OK",
         message: error.message,
@@ -121,6 +124,7 @@ export const artistController = {
         data: data,
       });
     } catch (error: any) {
+      await mediaService.unlinkMedia(req.files);
       res.status(400).json({
         status: "NOT_OK",
         message: error.message,
@@ -229,6 +233,20 @@ export const artistController = {
       res.status(200).json({
         status: "OK",
         message: "Collaboration updated successfully",
+        data: data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getCollaborations(req: Request, res: Response, next: NextFunction) {
+    const artistId = req.params.artistId;
+    const queries = req.query;
+    try {
+      const data = await artistService.getCollaborations(artistId, queries);
+      res.status(200).json({
+        status: "OK",
         data: data,
       });
     } catch (error) {
